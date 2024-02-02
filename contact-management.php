@@ -22,27 +22,28 @@ function cm_init() {
     
         $charset_collate = $wpdb->get_charset_collate();
     
-        $sqlPeople = "CREATE TABLE $tablePeople (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            name varchar(255) NOT NULL,
-            email varchar(255) NOT NULL UNIQUE,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
+        $sql = "
+            CREATE TABLE $tablePeople (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                name varchar(255) NOT NULL,
+                email varchar(255) NOT NULL UNIQUE,
+                PRIMARY KEY (id)
+            ) $charset_collate;
+            
+            CREATE TABLE $tableContact (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                personId mediumint(9) NOT NULL,
+                tel varchar(20) NOT NULL,
+                PRIMARY KEY (id),
+            ) $charset_collate;
+        ";
 
-        $sqlContact = "CREATE TABLE $tableContact (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            personId mediumint(9) NOT NULL,
-            tel varchar(20) NOT NULL,
-            PRIMARY KEY (id),
-            INDEX per_ind (personId),
-            FOREIGN KEY (personId) REFERENCES $tablePeople(id)
-        ) $charset_collate;";
-        
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        
-        dbDelta($sqlPeople);
-        dbDelta($sqlContact);
+
+        dbDelta($sql);
     }
+
+    wp_enqueue_style('cm-plugin-style', plugins_url('style.css', __FILE__), array(), '1.0');
 
     // Public part
     add_shortcode('contact_management_people', 'cm_public_people_shortcode');
@@ -247,11 +248,53 @@ function cm_add_new_contact_page() {
 
 function cm_public_people_shortcode($atts) {
     ob_start();
+
+    if(!$_GET['id']) { ?>
+    <section class="wrapper contact-management">
+        <span>List of people</span>
+        <table class="contact-management__table">
+            <?php
+                global $wpdb, $tablePeople;
+
+                $query = "SELECT * FROM $tablePeople";
+
+                $results = $wpdb->get_results($query);
+
+                echo
+                '<thead>
+                    <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Email</td>
+                    <td></td>
+                    </tr>
+                </thead>
+                <tbody>';
+
+                foreach ($results as $result) {
+                    echo
+                    '<tr>
+                        <td>'.$result->id.'</td>
+                        <td>'.$result->name.'</td>
+                        <td>'.$result->email.'</td>
+                        <td></td>
+                    </tr>';
+                }
+
+                echo '</tbody>';
+
+                if (isset($_POST['submit_delete'])) {
+                    global $wpdb;
+                    $tablePeople = $wpdb->prefix . 'people';
+                    $resultId = $_POST['contact_person_delete'];
+                    $wpdb->delete( $tablePeople, array( 'id' => $resultId ) );
+                }
+            ?>
+        </table>
+    </section>
+    <?php }
 ?>
-    <section class="contact-management">
-        <h1>List of people</h1>
-        
-    </section>    
+    
 <?php
     return ob_get_clean();
 }

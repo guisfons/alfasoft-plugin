@@ -1,0 +1,86 @@
+.contact-management {
+    margin: 0 auto;
+    width: 90%;
+    max-width: 1350px;
+}
+
+.contact-management span {
+    font-size: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 20px auto;
+    display: block;
+}
+
+.contact-management__table {
+    border: 1px solid #eee;
+    width: 100%;
+    font-size: 17px;
+
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-collapse: inherit;
+    border-spacing: 0;
+    border-color: inherit;
+    vertical-align: inherit;
+    text-align: left;
+    font-weight: inherit;
+    -webkit-border-horizontal-spacing: 0;
+    -webkit-border-vertical-spacing: 0;
+}
+
+.contact-management__table * {
+    padding: 10px;
+}
+
+.contact-management__table thead, .contact-management__table thead tr, .contact-management__table tbody, .contact-management__table tbody tr {
+    width: 100%;
+    padding: 0;
+}
+
+.contact-management__table thead {
+    font-weight: 700;
+    background-color: #009fff;
+    padding: 10px;
+}
+
+.contact-management__table tbody tr:nth-of-type(even) {
+    background-color: #eee;
+}
+
+.contact-management__table tbody tr:nth-of-type(odd) {
+    background-color: #c9c9c9;
+}
+
+.contact-management__table td {
+    border: none;
+    border-spacing: none;
+}
+
+.contact-management__add form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    line-height: 100%;
+    gap: 10px;
+}
+
+.contact-management__add form label {
+    width: fit-content;
+}
+
+.contact-management__add input[type=submit] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 40px;
+    border: 1px solid #333;
+    background-color: #333;
+    color: #fff;
+    margin: 30px auto 30px 0;
+}
