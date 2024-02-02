@@ -32,8 +32,7 @@ function cm_init() {
         $sqlContact = "CREATE TABLE $tableContact (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             personId int NOT NULL,
-            countryCode varchar(7) NOT NULL,
-            number varchar(9) NOT NULL,
+            tel varchar(20) NOT NULL,
             PRIMARY KEY (id),
             FOREIGN KEY (personId) REFERENCES $tablePeople(id),
         ) $charset_collate;";
@@ -101,6 +100,7 @@ function cm_admin_page() {
                     <td>ID</td>
                     <td>Name</td>
                     <td>Email</td>
+                    <td>Contacts</td>
                     <td></td>
                     </tr>
                 </thead>
@@ -111,6 +111,7 @@ function cm_admin_page() {
                     '<tr>
                         <td>'.$result->id.'</td>
                         <td>'.$result->name.'</td>
+                        <td>'.$result->email.'</td>
                         <td>'.$result->email.'</td>
                         <td>
                             <form method="post" action="">
@@ -181,16 +182,15 @@ function cm_add_new_contact_page() {
     global $wpdb;
 
     if (isset($_POST['submit_contact'])) {
-        $tel = $_POST['contact_tel'];
+        $tel = $_POST['contact_country_code'].$_POST['contact_tel'];
+        $id = $_POST['contact_person'];
 
         if (!empty($tel)) {
             $tableContact = $wpdb->prefix . 'contact';
 
-            insert($tableContact, ['tel' => $tel, 'email' => $email]);
+            insert($tableContact, ['tel' => $tel, 'personId' => $id]);
 
-            echo '<div class="contact-management__updated"><p>New person added successfully!</p></div>';
-        } else {
-            echo '<div class="contact-management__error"><p>Please provide valid telephone and email.</p></div>';
+            echo '<div class="contact-management__updated"><p>New contact added successfully!</p></div>';
         }
     }
     ?>
@@ -198,21 +198,23 @@ function cm_add_new_contact_page() {
         <h1>Add New Contact</h1>
 
         <form method="post" action="">
-            <label for="contact_country_code">Country Code:
+            <label for="contact_person">Person Contact Email
                 <select name="contact_person" id="">
                     <option value="" selected disabled>Select Person Email</option>
                     <?php
-                    global $wpdb, $tablePeople;
-
-                    $query = "SELECT * FROM $tablePeople";
-
-                    $results = $wpdb->get_results($query);
-
-                    foreach ($results as $result) {
-                        echo "<option value=".$result->email.">{$result->email}</option>";
-                    }
+                        global $wpdb, $tablePeople;
+                        
+                        $query = "SELECT * FROM $tablePeople";
+                        
+                        $results = $wpdb->get_results($query);
+                        
+                        foreach ($results as $result) {
+                            echo "<option value=".$result->id.">{$result->email}</option>";
+                        }
                     ?>
                 </select>
+            </label>
+            <label for="contact_country_code">Country Code:
                 <select name="contact_country_code" id="" required>
 
                     <?php
