@@ -9,9 +9,19 @@
  */
 
 
-add_action('admin_menu', 'cm_init');
-
 function cm_init() {
+    if(is_admin()) {
+        add_action('admin_menu', 'cm_add_menu_pages');
+    }
+
+    // Public part
+    add_shortcode('contact_management_people', 'cm_public_people_shortcode');
+}
+
+add_action('init', 'cm_init');
+
+function cm_add_menu_pages() {
+    // Management part
     add_menu_page(
         'Contact Management',
         'Contact Management',
@@ -70,4 +80,15 @@ function cm_add_new_contact_page() {
         </table>
     </div>
     <?php
+}
+
+function cm_public_people_shortcode($atts) {
+    ob_start();
+?>
+    <section class="contact-management">
+        <h1>List of people</h1>
+        
+    </section>    
+<?php
+return ob_get_clean();
 }
