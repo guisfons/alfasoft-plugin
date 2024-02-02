@@ -249,7 +249,8 @@ function cm_add_new_contact_page() {
 function cm_public_people_shortcode($atts) {
     ob_start();
 
-    if(!$_GET['id']) { ?>
+    // if(!$_GET['id']) {
+    ?>
     <section class="wrapper contact-management">
         <span>List of people</span>
         <table class="contact-management__table">
@@ -292,7 +293,8 @@ function cm_public_people_shortcode($atts) {
             ?>
         </table>
     </section>
-    <?php }
+    <?php
+    // }
 ?>
     
 <?php
