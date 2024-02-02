@@ -9,9 +9,28 @@
  */
 
 
+
+global $wpdb;
+$tablePeople = $wpdb->prefix . 'people';
+
 function cm_init() {
     if(is_admin()) {
         add_action('admin_menu', 'cm_add_menu_pages');
+
+        global $wpdb, $tablePeople;
+    
+        $charset_collate = $wpdb->get_charset_collate();
+    
+        $sql = "CREATE TABLE $tablePeople (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            email varchar(255) NOT NULL,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+    
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        dbDelta($sql);
     }
 
     // Public part
@@ -65,9 +84,36 @@ function cm_admin_page() {
 }
 
 function cm_add_new_person_page() {
+    global $wpdb;
+    
+
+    if (isset($_POST['submit_person'])) {
+        // Process form data and add a new person
+        $name = sanitize_text_field($_POST['contact_name']);
+        $email = sanitize_email($_POST['contact_email']);
+
+        // Validate input before adding to the database
+        if (!empty($name) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $tablePeople = $wpdb->prefix . 'people';
+
+            insert($tablePeople, ['name' => $name, 'email' => $email]);
+
+            echo '<div class="contact-management__updated"><p>New person added successfully!</p></div>';
+        } else {
+            echo '<div class="contact-management__error"><p>Please provide valid name and email.</p></div>';
+        }
+    }
     ?>
     <div class="wrap">
-        <h1>Add New Person</h1>
+        <section class="contact-management__add">
+            <h1>Add New Person</h1>
+    
+            <form method="post" action="">
+                <label for="contact_name">Name: <input type="text" name="contact_name" minlength="5" required></label>
+                <label for="contact_email">Email: <input type="email" name="contact_email" required></label>
+                <input type="submit" name="submit_person" value="Add Person">
+            </form>
+        </section>
     </div>
     <?php
 }
@@ -90,5 +136,13 @@ function cm_public_people_shortcode($atts) {
         
     </section>    
 <?php
-return ob_get_clean();
+    return ob_get_clean();
+}
+
+function insert(string $table, array $data) {
+    global $wpdb;
+
+    $wpdb->insert(
+        $table, $data, array_fill(0, count($data) - 1, '%s')
+    );
 }
