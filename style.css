@@ -59,6 +59,7 @@
 .contact-management__table td {
     border: none;
     border-spacing: none;
+    text-align: center;
 }
 
 .contact-management__add form {
