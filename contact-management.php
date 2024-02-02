@@ -34,12 +34,13 @@ function cm_init() {
             personId int NOT NULL,
             tel varchar(20) NOT NULL,
             PRIMARY KEY (id),
-            FOREIGN KEY (personId) REFERENCES $tablePeople(id),
+            FOREIGN KEY (personId) REFERENCES $tablePeople(id)
         ) $charset_collate;";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         
-        dbDelta($sqlPeople, $sqlContact);
+        dbDelta($sqlPeople);
+        dbDelta($sqlContact);
     }
 
     // Public part
