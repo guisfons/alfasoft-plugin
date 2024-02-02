@@ -31,9 +31,10 @@ function cm_init() {
 
         $sqlContact = "CREATE TABLE $tableContact (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            personId int NOT NULL,
+            personId mediumint(9) NOT NULL,
             tel varchar(20) NOT NULL,
             PRIMARY KEY (id),
+            INDEX per_ind (personId),
             FOREIGN KEY (personId) REFERENCES $tablePeople(id)
         ) $charset_collate;";
         
