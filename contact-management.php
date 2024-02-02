@@ -24,7 +24,7 @@ function cm_init() {
         $sql = "CREATE TABLE $tablePeople (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             name varchar(255) NOT NULL,
-            email varchar(255) NOT NULL,
+            email varchar(255) NOT NULL UNIQUE,
             PRIMARY KEY (id)
         ) $charset_collate;";
     
@@ -78,6 +78,30 @@ function cm_admin_page() {
 
         <h2>List People</h2>
         <table class="widefat">
+            <?php
+                global $wpdb, $tablePeople;
+
+                $query = "SELECT * FROM $tablePeople";
+
+                $results = $wpdb->get_results($query);
+
+                echo
+                '<thead>
+                    <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Email</td>
+                    <td></td>
+                    </tr>
+                </thead>
+                <tbody>';
+
+                foreach ($results as $result) {
+                    echo "<tr><td>{$result->id}</td><td>{$result->name}</td><td>{$result->email}</td></tr>";
+                }
+
+                echo '</tbody>';
+            ?>
         </table>
     </div>
     <?php
